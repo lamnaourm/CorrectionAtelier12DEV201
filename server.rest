@@ -1,0 +1,14 @@
+POST http://localhost:3000/products
+Content-Type: application/json
+
+{
+    "name":"Produit 2",
+    "description": "Produit 2",
+    "price": 25
+}
+
+###
+POST http://localhost:3000/products/buy
+Content-Type: application/json
+
+["642c434b66f4ce6d98c4f920","642c431166f4ce6d98c4f91e"]
