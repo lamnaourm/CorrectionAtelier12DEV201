@@ -8,7 +8,7 @@ const queueName1 = "order-service-queue"
 const queueName2 = "produit-service-queue"
 
 async function connectToRabbitMQ() {
-    const amqpServer = "amqp://guest:guest@localhost:5672";
+    const amqpServer = "amqp://guest:guest@rabbit:5672";
     connection = await amqp.connect(amqpServer);
     channel = await connection.createChannel();
     await channel.assertQueue(queueName1);
@@ -41,7 +41,16 @@ routes.post('/buy', (req, res) => {
     
     productModel.find({_id: {$in: req.body}}).then((prods) => {
         channel.sendToQueue(queueName1, Buffer.from(JSON.stringify(prods)));
-        res.sendStatus(200);
+        
+        channel.consume(queueName2, (data) => {
+            res.status(200).json({
+                message:"commande cree",
+                order: JSON.parse(data.content.toString()),
+            });
+            channel.ack(data);
+        })
+        
+        
     });
 })
 

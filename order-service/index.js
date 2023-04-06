@@ -8,21 +8,23 @@ const app = express()
 var connection, channel;
 const queueName1 = "order-service-queue"
 const queueName2 = "produit-service-queue"
+const queueName3 = "notification-service-queue"
 
 app.use(express.json())
 
 mongoose
-    .connect(`mongodb://localhost:27017/dborders`, { useNewUrlParser: true })
+    .connect(`mongodb://mongo:27017/dborders`, { useNewUrlParser: true })
     .then(() => console.log("connexion BD reussie"))
     .catch((error) => console.log('Erreur de connexion' + error));
 
 
 async function connectToRabbitMQ() {
-    const amqpServer = "amqp://guest:guest@localhost:5672";
+    const amqpServer = "amqp://guest:guest@rabbit:5672";
     connection = await amqp.connect(amqpServer);
     channel = await connection.createChannel();
     await channel.assertQueue(queueName1);
     await channel.assertQueue(queueName2);
+    await channel.assertQueue(queueName3);
 }
 
 
@@ -38,15 +40,14 @@ connectToRabbitMQ().then(() => {
         const order = new orderModel({products, total})
 
         order.save().then((ord) => {
-            console.log("Ordre cree avec succes")
+            channel.sendToQueue(queueName2, Buffer.from(JSON.stringify(ord)));
+            channel.sendToQueue(queueName3, Buffer.from(JSON.stringify(ord)));
         } )
 
         channel.ack(data);
     })
 })
 
-
-
-app.listen(3001, () => {
+app.listen(3000, () => {
     console.log("Server orders started");
 })

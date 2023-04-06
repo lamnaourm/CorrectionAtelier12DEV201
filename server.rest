@@ -2,13 +2,13 @@ POST http://localhost:3000/products
 Content-Type: application/json
 
 {
-    "name":"Produit 2",
-    "description": "Produit 2",
-    "price": 25
+    "name":"Produit 5",
+    "description": "Produit 5",
+    "price": 66
 }
 
 ###
 POST http://localhost:3000/products/buy
 Content-Type: application/json
 
-["642c434b66f4ce6d98c4f920","642c431166f4ce6d98c4f91e"]
+["642e8f97bcf129fdf85ea3e3","642e8faabcf129fdf85ea3e5"]

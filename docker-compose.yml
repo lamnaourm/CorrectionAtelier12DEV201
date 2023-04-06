@@ -1,0 +1,39 @@
+version: '3.8'
+services:
+  mongo:
+    image: mongo
+    ports:
+      - 27017:27017
+    volumes:
+      - vdata:/data/db
+  rabbit:
+    image: rabbitmq:3-management
+    ports:
+      - 5672:5672
+      - 15672:15672
+  pservice:
+    build: ./product-service/
+    ports:
+      - 3000:3000
+    depends_on:
+      - mongo
+      - rabbit
+    restart: always
+  oservice:
+    build: ./order-service/
+    ports:
+      - 3001:3000
+    depends_on:
+      - mongo
+      - rabbit
+    restart: always
+  nservice:
+    build: ./notification-service/
+    ports:
+      - 3002:3000
+    depends_on:
+      - mongo
+      - rabbit
+    restart: always
+volumes:
+  vdata:

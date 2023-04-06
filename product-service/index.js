@@ -7,7 +7,7 @@ const app = express()
 app.use(express.json())
 
 mongoose
-    .connect(`mongodb://localhost:27017/dbproducts`, { useNewUrlParser: true })
+    .connect(`mongodb://mongo:27017/dbproducts`, { useNewUrlParser: true })
     .then(() => console.log("connexion BD reussie"))
     .catch((error) => console.log('Erreur de connexion' + error));
 
